@@ -1,0 +1,52 @@
+version: '3'
+services:
+  wg-server:
+    image: ghcr.io/linuxserver/wireguard:v1.0.20210914-ls11
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - SERVERURL=auto # dynamically gets a public ip address !
+      - SERVERPORT=51820
+      - PEERS=a,b,c,d,e,f
+      - INTERNAL_SUBNET=${TEAM_SUBNET}
+      - ALLOWEDIPS=${TEAM_SUBNET}/${TEAM_SUBNET_PREFIX}
+      - LOG_CONFS=false
+      - USE_COREDNS=true
+    volumes:
+      - ./wg-server/config:/config
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    restart: unless-stopped
+  tranfer:
+    image: dutchcoders/transfer.sh:latest
+    command: ["--provider", "local", "--basedir", "/shared"]
+    volumes:
+      - ./shared-dir/vol:/shared
+    ports:
+      - 8090:8080
+    network_mode: "service:wg-server"
+    restart: unless-stopped
+  xray:
+    image: alireza7/x-ui
+    environment:
+      XRAY_VMESS_AEAD_FORCED: "false"
+    volumes:
+      - ./xray/x-ui-db:/etc/x-ui/
+      - ./xray/config.json:/app/bin/config.json
+    ports:
+      - 54321:54321
+      - 443:443
+    network_mode: "service:wg-server"
+    restart: unless-stopped
+
+
+  # sshd:
+  # wg-game-way:
+  # openvpn-game-way:
+  
