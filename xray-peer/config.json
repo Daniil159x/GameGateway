@@ -1,0 +1,61 @@
+{
+    "log": {
+        "loglevel": "info"
+    },
+    "inbounds": [
+        {
+            "listen": "0.0.0.0", 
+            "port": 10808, 
+            "protocol": "socks",
+            "settings": {
+                "udp": true
+            },
+            "sniffing": {
+                "enabled": true,
+                "destOverride": [
+                    "http",
+                    "tls",
+                    "quic"
+                ],
+                "routeOnly": true
+            }
+        },
+        {
+            "listen": "0.0.0.0",
+            "port": 3136,
+            "protocol": "http"
+        }
+    ],
+    "outbounds": [
+        {
+            "protocol": "vless",
+            "settings": {
+                "vnext": [
+                    {
+                        "address": "172.16.159.20", 
+                        "port": 443, 
+                        "users": [
+                            {
+                                "encryption": "none",
+                                "email": "ijwpz5f9d",
+                                "flow": "xtls-rprx-vision",
+                                "id": "3ec35998-ce34-49fa-f756-66171913b8df"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "tcp",
+                "security": "reality",
+                "realitySettings": {
+                    "fingerprint": "chrome", 
+                    "serverName": "ya.ru",
+                    "publicKey": "Ka6xWNbIAvKJQK1YLjHz4p0sQuAyeLlDXVm0-SgZLEw",
+                    "shortId": "d76d"
+                }
+            },
+            "tag": "proxy"
+        }
+    ]
+}

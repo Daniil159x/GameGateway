@@ -1,0 +1,9 @@
+version: '3'
+services:
+  xray-peer:
+    image: ghcr.io/xtls/xray-core:latest
+    volumes:
+      - ./xray-peer/config.json:/etc/xray/config.json:ro
+    ports:
+      - 10808:10808
+      - 3136:3136

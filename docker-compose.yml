@@ -8,7 +8,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - SERVERURL=auto # dynamically gets a public ip address !
+      - SERVERURL=172.16.159.20 # dynamically gets a public ip address !
       - SERVERPORT=51820
       - PEERS=a,b,c,d,e,f
       - INTERNAL_SUBNET=${TEAM_SUBNET}
@@ -19,6 +19,11 @@ services:
       - ./wg-server/config:/config
     ports:
       - 51820:51820/udp
+      # ports of service:tranfer:
+      - 8090:8080
+      # ports if serive:xray:
+      - 54321:54321
+      - 443:443
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
       - net.ipv4.ip_forward=1
@@ -28,20 +33,20 @@ services:
     command: ["--provider", "local", "--basedir", "/shared"]
     volumes:
       - ./shared-dir/vol:/shared
-    ports:
-      - 8090:8080
+#    ports:
+#      - 8090:8080
     network_mode: "service:wg-server"
     restart: unless-stopped
   xray:
-    image: alireza7/x-ui
+    image: alireza7/x-ui:1.6.0
     environment:
       XRAY_VMESS_AEAD_FORCED: "false"
     volumes:
       - ./xray/x-ui-db:/etc/x-ui/
-      - ./xray/config.json:/app/bin/config.json
-    ports:
-      - 54321:54321
-      - 443:443
+#      - ./xray/config.json:/app/bin/config.json:ro
+#   ports:
+#      - 54321:54321
+#      - 443:443
     network_mode: "service:wg-server"
     restart: unless-stopped
 
@@ -49,4 +54,4 @@ services:
   # sshd:
   # wg-game-way:
   # openvpn-game-way:
-  
+
